@@ -26,6 +26,8 @@ on:
 
 jobs:
   run-bot-job:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     timeout-minutes: 30
     concurrency:
@@ -33,10 +35,10 @@ jobs:
       cancel-in-progress: false
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.12"
 
@@ -73,4 +75,13 @@ jobs:
           TELEGRAM_BOT_2_TOKEN: ${{ secrets.TELEGRAM_BOT_2_TOKEN }}
           TELEGRAM_BOT_2_CHAT_ID: ${{ secrets.TELEGRAM_BOT_2_CHAT_ID }}
           TELEGRAM_BOT_2_NAME: ${{ secrets.TELEGRAM_BOT_2_NAME }}
+          TELEGRAM_BOT_3_TOKEN: ${{ secrets.TELEGRAM_BOT_3_TOKEN }}
+          TELEGRAM_BOT_3_CHAT_ID: ${{ secrets.TELEGRAM_BOT_3_CHAT_ID }}
+          TELEGRAM_BOT_3_NAME: ${{ secrets.TELEGRAM_BOT_3_NAME }}
+          TELEGRAM_BOT_4_TOKEN: ${{ secrets.TELEGRAM_BOT_4_TOKEN }}
+          TELEGRAM_BOT_4_CHAT_ID: ${{ secrets.TELEGRAM_BOT_4_CHAT_ID }}
+          TELEGRAM_BOT_4_NAME: ${{ secrets.TELEGRAM_BOT_4_NAME }}
+          TELEGRAM_BOT_5_TOKEN: ${{ secrets.TELEGRAM_BOT_5_TOKEN }}
+          TELEGRAM_BOT_5_CHAT_ID: ${{ secrets.TELEGRAM_BOT_5_CHAT_ID }}
+          TELEGRAM_BOT_5_NAME: ${{ secrets.TELEGRAM_BOT_5_NAME }}
         run: python script_bolsa.py "${{ steps.resolve_mode.outputs.mode }}"

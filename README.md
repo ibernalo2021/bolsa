@@ -24,12 +24,24 @@ TELEGRAM_BOT_1_CHAT_ID=tu_chat_id
 TELEGRAM_BOT_1_NAME=Ivan
 ```
 
-Variables opcionales para un segundo bot:
+Variables opcionales para bots adicionales hasta un maximo de 5:
 
 ```env
 TELEGRAM_BOT_2_TOKEN=
 TELEGRAM_BOT_2_CHAT_ID=
 TELEGRAM_BOT_2_NAME=Bot Secundario
+
+TELEGRAM_BOT_3_TOKEN=
+TELEGRAM_BOT_3_CHAT_ID=
+TELEGRAM_BOT_3_NAME=Bot 3
+
+TELEGRAM_BOT_4_TOKEN=
+TELEGRAM_BOT_4_CHAT_ID=
+TELEGRAM_BOT_4_NAME=Bot 4
+
+TELEGRAM_BOT_5_TOKEN=
+TELEGRAM_BOT_5_CHAT_ID=
+TELEGRAM_BOT_5_NAME=Bot 5
 ```
 
 ## Ejecucion local
@@ -74,6 +86,15 @@ Crea estos secretos:
 - `TELEGRAM_BOT_2_TOKEN` opcional
 - `TELEGRAM_BOT_2_CHAT_ID` opcional
 - `TELEGRAM_BOT_2_NAME` opcional
+- `TELEGRAM_BOT_3_TOKEN` opcional
+- `TELEGRAM_BOT_3_CHAT_ID` opcional
+- `TELEGRAM_BOT_3_NAME` opcional
+- `TELEGRAM_BOT_4_TOKEN` opcional
+- `TELEGRAM_BOT_4_CHAT_ID` opcional
+- `TELEGRAM_BOT_4_NAME` opcional
+- `TELEGRAM_BOT_5_TOKEN` opcional
+- `TELEGRAM_BOT_5_CHAT_ID` opcional
+- `TELEGRAM_BOT_5_NAME` opcional
 
 ### 3. Probar manualmente
 
@@ -100,6 +121,7 @@ El workflow ejecuta:
 ## Notas importantes
 
 - GitHub Actions no deja el proceso vivo; ejecuta cada job y termina. Este proyecto fue adaptado especificamente para ese modelo.
+- El bot principal es obligatorio. Los bots `2` a `5` son opcionales y solo se usan si tienen `TOKEN` y `CHAT_ID`.
 - Si Telegram devuelve `chat not found`, el problema suele ser el `CHAT_ID`.
 - Si la API de Telegram devuelve `404`, el problema suele ser el `TOKEN`.
 - Si usas un repo privado, vigila el consumo de minutos de GitHub Actions.

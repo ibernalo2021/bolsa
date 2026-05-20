@@ -30,37 +30,33 @@ def cargar_dotenv(ruta=".env"):
 
 
 def cargar_bots_desde_entorno():
-    bot_1 = {
-        "token": os.getenv("TELEGRAM_BOT_1_TOKEN"),
-        "chat_id": os.getenv("TELEGRAM_BOT_1_CHAT_ID"),
-        "nombre": os.getenv("TELEGRAM_BOT_1_NAME", "Bot Primario"),
-    }
-    bot_2 = {
-        "token": os.getenv("TELEGRAM_BOT_2_TOKEN"),
-        "chat_id": os.getenv("TELEGRAM_BOT_2_CHAT_ID"),
-        "nombre": os.getenv("TELEGRAM_BOT_2_NAME", "Bot Secundario"),
-    }
-
+    bots = []
     faltantes_bot_1 = []
-    if not bot_1["token"]:
-        faltantes_bot_1.append("TELEGRAM_BOT_1_TOKEN")
-    if not bot_1["chat_id"]:
-        faltantes_bot_1.append("TELEGRAM_BOT_1_CHAT_ID")
+
+    for indice in range(1, 6):
+        bot = {
+            "token": os.getenv(f"TELEGRAM_BOT_{indice}_TOKEN"),
+            "chat_id": os.getenv(f"TELEGRAM_BOT_{indice}_CHAT_ID"),
+            "nombre": os.getenv(f"TELEGRAM_BOT_{indice}_NAME", f"Bot {indice}"),
+        }
+
+        if indice == 1:
+            if not bot["token"]:
+                faltantes_bot_1.append("TELEGRAM_BOT_1_TOKEN")
+            if not bot["chat_id"]:
+                faltantes_bot_1.append("TELEGRAM_BOT_1_CHAT_ID")
+        if bot["token"] and bot["chat_id"]:
+            bots.append(bot)
+        elif bot["token"] or bot["chat_id"]:
+            print(
+                f"Aviso: el Bot {indice} fue ignorado porque su configuracion esta incompleta. "
+                f"Debes definir TELEGRAM_BOT_{indice}_TOKEN y TELEGRAM_BOT_{indice}_CHAT_ID para activarlo."
+            )
 
     if faltantes_bot_1:
         raise RuntimeError(
             "Faltan variables de entorno requeridas para el bot principal: "
             + ", ".join(faltantes_bot_1)
-        )
-
-    bots = [bot_1]
-
-    if bot_2["token"] and bot_2["chat_id"]:
-        bots.append(bot_2)
-    elif bot_2["token"] or bot_2["chat_id"]:
-        print(
-            "Aviso: el Bot Secundario fue ignorado porque su configuracion esta incompleta. "
-            "Debes definir TELEGRAM_BOT_2_TOKEN y TELEGRAM_BOT_2_CHAT_ID para activarlo."
         )
 
     return bots
