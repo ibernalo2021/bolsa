@@ -1,0 +1,76 @@
+name: Bot Jobs
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Job a ejecutar"
+        required: true
+        default: "market_scan"
+        type: choice
+        options:
+          - startup
+          - market_scan
+          - preclose
+          - swing_report
+          - news_scan
+  schedule:
+    - cron: "0 9-15 * * 1-5"
+      timezone: "America/New_York"
+    - cron: "45 15 * * 1-5"
+      timezone: "America/New_York"
+    - cron: "5 16 * * 1-5"
+      timezone: "America/New_York"
+    - cron: "0 0,8,20 * * *"
+      timezone: "America/New_York"
+
+jobs:
+  run-bot-job:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    concurrency:
+      group: bot-jobs-${{ github.event.schedule || github.event.inputs.mode || 'manual' }}
+      cancel-in-progress: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Resolve mode
+        id: resolve_mode
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            mode="${{ github.event.inputs.mode }}"
+          elif [ "${{ github.event.schedule }}" = "0 9-15 * * 1-5" ]; then
+            mode="market_scan"
+          elif [ "${{ github.event.schedule }}" = "45 15 * * 1-5" ]; then
+            mode="preclose"
+          elif [ "${{ github.event.schedule }}" = "5 16 * * 1-5" ]; then
+            mode="swing_report"
+          elif [ "${{ github.event.schedule }}" = "0 0,8,20 * * *" ]; then
+            mode="news_scan"
+          else
+            echo "No se pudo resolver el modo para este disparador."
+            exit 1
+          fi
+
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+          echo "Modo seleccionado: $mode"
+
+      - name: Run bot job
+        env:
+          TELEGRAM_BOT_1_TOKEN: ${{ secrets.TELEGRAM_BOT_1_TOKEN }}
+          TELEGRAM_BOT_1_CHAT_ID: ${{ secrets.TELEGRAM_BOT_1_CHAT_ID }}
+          TELEGRAM_BOT_1_NAME: ${{ secrets.TELEGRAM_BOT_1_NAME }}
+          TELEGRAM_BOT_2_TOKEN: ${{ secrets.TELEGRAM_BOT_2_TOKEN }}
+          TELEGRAM_BOT_2_CHAT_ID: ${{ secrets.TELEGRAM_BOT_2_CHAT_ID }}
+          TELEGRAM_BOT_2_NAME: ${{ secrets.TELEGRAM_BOT_2_NAME }}
+        run: python script_bolsa.py "${{ steps.resolve_mode.outputs.mode }}"
