@@ -16,14 +16,10 @@ on:
           - swing_report
           - news_scan
   schedule:
-    - cron: "7 9-15 * * 1-5"
-      timezone: "America/New_York"
-    - cron: "45 15 * * 1-5"
-      timezone: "America/New_York"
-    - cron: "5 16 * * 1-5"
-      timezone: "America/New_York"
-    - cron: "12 0,8,20 * * *"
-      timezone: "America/New_York"
+    - cron: "7 13-19 * * 1-5"
+    - cron: "45 19 * * 1-5"
+    - cron: "5 20 * * 1-5"
+    - cron: "12 0,4,12 * * *"
 
 jobs:
   run-bot-job:
@@ -54,13 +50,13 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             mode="${{ github.event.inputs.mode }}"
-          elif [ "${{ github.event.schedule }}" = "7 9-15 * * 1-5" ]; then
+          elif [ "${{ github.event.schedule }}" = "7 13-19 * * 1-5" ]; then
             mode="market_scan"
-          elif [ "${{ github.event.schedule }}" = "45 15 * * 1-5" ]; then
+          elif [ "${{ github.event.schedule }}" = "45 19 * * 1-5" ]; then
             mode="preclose"
-          elif [ "${{ github.event.schedule }}" = "5 16 * * 1-5" ]; then
+          elif [ "${{ github.event.schedule }}" = "5 20 * * 1-5" ]; then
             mode="swing_report"
-          elif [ "${{ github.event.schedule }}" = "12 0,8,20 * * *" ]; then
+          elif [ "${{ github.event.schedule }}" = "12 0,4,12 * * *" ]; then
             mode="news_scan"
           else
             echo "No se pudo resolver el modo para este disparador."
