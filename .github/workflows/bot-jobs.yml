@@ -15,13 +15,13 @@ on:
           - swing_report
           - news_scan
   schedule:
-    - cron: "0 9-15 * * 1-5"
+    - cron: "7 9-15 * * 1-5"
       timezone: "America/New_York"
     - cron: "45 15 * * 1-5"
       timezone: "America/New_York"
     - cron: "5 16 * * 1-5"
       timezone: "America/New_York"
-    - cron: "0 0,8,20 * * *"
+    - cron: "12 0,8,20 * * *"
       timezone: "America/New_York"
 
 jobs:
@@ -33,6 +33,7 @@ jobs:
     concurrency:
       group: bot-jobs-${{ github.event.schedule || github.event.inputs.mode || 'manual' }}
       cancel-in-progress: false
+      queue: max
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -51,13 +52,13 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             mode="${{ github.event.inputs.mode }}"
-          elif [ "${{ github.event.schedule }}" = "0 9-15 * * 1-5" ]; then
+          elif [ "${{ github.event.schedule }}" = "7 9-15 * * 1-5" ]; then
             mode="market_scan"
           elif [ "${{ github.event.schedule }}" = "45 15 * * 1-5" ]; then
             mode="preclose"
           elif [ "${{ github.event.schedule }}" = "5 16 * * 1-5" ]; then
             mode="swing_report"
-          elif [ "${{ github.event.schedule }}" = "0 0,8,20 * * *" ]; then
+          elif [ "${{ github.event.schedule }}" = "12 0,8,20 * * *" ]; then
             mode="news_scan"
           else
             echo "No se pudo resolver el modo para este disparador."
@@ -69,6 +70,7 @@ jobs:
 
       - name: Run bot job
         env:
+          BOT_NOTIFY_EMPTY_RUNS: "true"
           TELEGRAM_BOT_1_TOKEN: ${{ secrets.TELEGRAM_BOT_1_TOKEN }}
           TELEGRAM_BOT_1_CHAT_ID: ${{ secrets.TELEGRAM_BOT_1_CHAT_ID }}
           TELEGRAM_BOT_1_NAME: ${{ secrets.TELEGRAM_BOT_1_NAME }}
